@@ -3,6 +3,9 @@
 
 (Paper authors: Antonio Quispe & Jesus M. Castanetto)
 
+[![DOI](https://zenodo.org/badge/525018011.svg)](https://zenodo.org/badge/latestdoi/525018011)
+
+
 The scripts written in R are of two types: (a) those that pre-process the data and (b) those that generate the figures (maps, timeline and line plot) and incidence table.
 
 | Script | Purpose |
