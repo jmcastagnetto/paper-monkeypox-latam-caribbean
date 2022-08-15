@@ -1,5 +1,7 @@
-# Code and data for the paper: "*Monkeypox in Latin America and the Caribbean: first response and challenge ahead after the first 12 weeks of the 2022 outbreak*"
+# Code and data for the paper: 
+## "*Monkeypox in Latin America and the Caribbean: first response and challenge ahead after the first 12 weeks of the 2022 outbreak*"
 
+(Paper authors: Antonio Quispe & Jesus M. Castanetto)
 
 The scripts written in R are of two types: (a) those that pre-process the data and (b) those that generate the figures (maps, timeline and line plot) and incidence table.
 
