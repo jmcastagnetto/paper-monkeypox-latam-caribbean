@@ -14,8 +14,8 @@ The scripts written in R are of two types: (a) those that pre-process the data a
 | fig04-monkeypox-plot-incidence-by-subregion.R | Trajectory of the incidence for all sub-regions, from the epidemiological week #20 until the week #31 of 2022  |
 | tab01-monkeypox-tables-incidence.R | Table with the incidences per country in Latinamerica and the Caribbean, up to the epidemiological week #31 of 2022 |
 
-The data from the original sources was last updated on 2022-08-11.
+The data from the original sources was last updated on 2022-08-11. 
 
-All the output artifacts (figures and table) can be found in the [output](output/) directory in this repository.
+All the output artifacts (figures and table) can be found in the [output](output/) directory in this repository. The figures are all in the zip file [figures.zip](output/figures.zip), because the original TIFF files are too big for the size limits of github.
 
 License: [MIT](LICENSE)
