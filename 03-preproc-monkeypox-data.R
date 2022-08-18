@@ -6,10 +6,8 @@ library(tidyverse)
 
 gh_url <- "https://github.com/globaldothealth/monkeypox/raw/main/latest.csv"
 gh_fn <- "data/orig/global_health_latest.csv"
-
-if (!file.exists(gh_fn)) {
-  download.file(url = gh_url, destfile = gh_fn)
-}
+# always get the latest data file
+download.file(url = gh_url, destfile = gh_fn)
 
 mp_raw <- read_csv(
   gh_fn,
