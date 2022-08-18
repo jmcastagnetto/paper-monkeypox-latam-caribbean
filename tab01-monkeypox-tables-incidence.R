@@ -3,14 +3,14 @@ library(gt)
 
 # Prepare data for the table ----------------------------------------------
 
-wb_countries <- readRDS("proc_data/wb-countries-income.rds") %>%
+wb_countries <- readRDS("data/proc/wb-countries-income.rds") %>%
   select(
     Country_ISO3 = Code,
     Income_group = `Income group`
   ) %>%
   distinct()
 
-mp_df <- readRDS("proc_data/monkeypox-confirmed-augmented.rds") %>%
+mp_df <- readRDS("data/proc/monkeypox-confirmed-augmented.rds") %>%
   filter(complete_epiweek)
 last_modified <- max(mp_df$epiweek, na.rm = TRUE)
 

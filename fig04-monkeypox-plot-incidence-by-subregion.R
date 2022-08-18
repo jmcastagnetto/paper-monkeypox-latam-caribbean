@@ -72,7 +72,7 @@ incid_plot <- ggplot(
     limits = c(min_date, max_date)
   ) +
   scale_color_manual(
-    values = paletteer_d("Polychrome::dark")
+    values = paletteer::paletteer_d("Polychrome::dark")
   ) +
   theme_bw() +
   theme(

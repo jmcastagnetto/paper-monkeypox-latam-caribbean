@@ -92,7 +92,7 @@ lac_plot <- ggplot(lac_map_incid) +
 
 ggsave(
   plot = lac_plot,
-  filename = "fig02-map-evolution-incidence-latamcarib.tiff",
+  filename = "output/fig02-map-evolution-incidence-latamcarib.tiff",
   dpi = 300,
   width = 16,
   height = 9
