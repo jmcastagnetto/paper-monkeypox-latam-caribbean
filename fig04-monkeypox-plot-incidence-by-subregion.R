@@ -1,4 +1,4 @@
-library(tidyverse)
+suppressPackageStartupMessages(library(tidyverse))
 
 mp_df <- readRDS("data/proc/monkeypox-confirmed-augmented.rds")
 

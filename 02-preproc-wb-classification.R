@@ -1,5 +1,5 @@
-library(tidyverse)
-library(readxl)
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(readxl))
 
 # data source: https://datahelpdesk.worldbank.org/knowledgebase/articles/906519-world-bank-country-and-lending-groups
 

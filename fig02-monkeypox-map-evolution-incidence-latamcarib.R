@@ -1,7 +1,7 @@
-library(tidyverse)
-library(sf)
-library(rnaturalearth)
-library(rnaturalearthdata)
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(sf))
+suppressPackageStartupMessages(library(rnaturalearth))
+suppressPackageStartupMessages(library(rnaturalearthdata))
 
 lac_map <- ne_countries(scale = "medium", returnclass = "sf") %>%
   filter(region_wb == "Latin America & Caribbean")
@@ -56,7 +56,7 @@ plot_df <- mp_df %>%
   )
 
 # select data from every other epiweek
-every_other_epiweek <- unique(plot_df$epiweek)[c(TRUE, FALSE)]
+every_other_epiweek <- unique(plot_df$epiweek)[c(FALSE, TRUE)]
 
 lac_map_incid <- lac_map %>%
   left_join(

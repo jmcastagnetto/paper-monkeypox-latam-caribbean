@@ -1,4 +1,4 @@
-library(tidyverse)
+suppressPackageStartupMessages(library(tidyverse))
 
 # data source: https://population.un.org/wpp/Download/Standard/CSV/
 

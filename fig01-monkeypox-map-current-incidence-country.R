@@ -1,7 +1,7 @@
-library(tidyverse)
-library(sf)
-library(rnaturalearth)
-library(rnaturalearthdata)
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(sf))
+suppressPackageStartupMessages(library(rnaturalearth))
+suppressPackageStartupMessages(library(rnaturalearthdata))
 
 mp_raw <- readRDS("data/proc/monkeypox-confirmed-augmented.rds")
 

@@ -1,0 +1,601 @@
+---
+title: "Supplementary materials"
+format:
+  pdf:
+    documentclass: scrartcl
+    number-sections: true
+    number-depth: 3
+    #keep-tex: true
+bibliography: suppmat.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE
+)
+options(knitr.kable.NA = "**")
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(knitr))
+suppressPackageStartupMessages(library(kableExtra))
+suppressPackageStartupMessages(library(ggpubr))
+suppressPackageStartupMessages(library(ggpmisc))
+
+
+mp_models_data <- readRDS(
+  "data/proc/monkeypox-selected-countries-model-data.rds"
+)
+
+mp_models_results <- readRDS(
+  "data/proc/monkeypox-selected-countries-model-results.rds"
+)
+
+mp_selected_countries <- mp_models_data %>% 
+  group_by(Country) %>% 
+  summarise(
+    Earliest = min(Date_confirmation),
+    Latest = max(Date_confirmation)
+  ) %>% 
+  left_join(
+    mp_models_results %>% 
+      filter(term == "days") %>% 
+      select(
+        Country,
+        nobs
+      ),
+    by = "Country"
+  )
+```
+
+\appendix
+
+\renewcommand{\thesection}{\Alph{section}}
+
+## Regression models of exponential growth {#unnumbered}
+
+
+### General equations
+
+During the first part of the development of an epidemic, we can assume an exponential growth according to @eq-expeq
+
+$$
+y = \alpha \beta^{\gamma x} = \alpha e^{(\gamma \log{\beta}) x}
+$$ {#eq-expeq}
+
+where: $y$ = is the cumulative case count, $x$ = number of days since the start of the series
+
+This equation can be linearized using logarithms, shown in @eq-logeq, and its equivalent @eq-altlogeq
+
+$$
+\log{y} = \log{\alpha} + (\gamma \log{\beta}) x
+$$ {#eq-logeq}
+
+$$
+\log{y} = A + B x
+$$ {#eq-altlogeq}
+
+where: $A = \log{\alpha}$, $B = \gamma \log{\beta}$
+
+### Model data selection
+
+The MPX data obtained from the Global Health Data Science Initiative, was filtered using the following procedure:
+
+1. Only cases with a confirmed status were kept
+2. Data for which the confirmation date ranged from the epidemiological weeks 20 to 33 of 2022 were used. This allowed us to consider only cases in non-endemic countries
+3. Data was combined by confirmation date at the country level, and, after ordering each country timeseries, a cumulative number of cases was calculated
+4. Data from countries with 200 or more cumulative cases, up to the mos recent reported date, were considered for modeling
+5. From the selected countries, we used only dates for which the number of cumulative cases was equal or greater than 10.
+6. For each country timeseries, we created a days count series which reflected the difference between the earliest date in the series and the current one.
+
+At the end of this selection procedure, we obtained the list in the following table:
+
+```{r}
+kbl(
+  mp_selected_countries,
+  format = "latex",
+  booktabs = TRUE,
+  caption = "Countries selected for modeling",
+  col.names = c(
+    "Country",
+    "Earliest",
+    "Latest",
+    paste0("N° Obs.", footnote_marker_number(1, "latex"))
+  ),
+  align = "lccr",
+  escape = FALSE
+) %>% 
+  kable_styling(
+    latex_options = c("striped", "hold_position")
+  ) %>% 
+  add_header_above(
+    c(
+      " " = 1,
+      "Confirmation dates" = 2,
+      " " = 1
+    )
+  ) %>% 
+  column_spec(1, italic = TRUE) %>% 
+  footnote(
+    number = "Number of days with reports of confirmed cases in the date range",
+    threeparttable = TRUE
+  )
+```
+ 
+### Regression results
+
+Using @eq-altlogeq, we performed a regression of the logarithm (base 10) of the cumulative number of cases versus the days counts (*vide supra*)
+
+The results of the regressions can be seen in the following table
+
+```{r}
+tbl_df <- mp_models_results %>% 
+  mutate(
+    term = if_else(
+      term == "days",
+      "B",
+      "A"
+    )
+  ) %>% 
+  select(
+    Country,
+    term,
+    estimate,
+    std.error
+  ) %>% 
+  pivot_wider(
+    names_from = "term",
+    values_from = c(estimate, std.error)
+  ) %>% 
+  left_join(
+    mp_models_results %>% 
+      filter(term == "days") %>% 
+      select(
+        Country,
+        adj.r.squared,
+        p.value,
+        nobs
+      ),
+    by = "Country"
+  ) %>% 
+  relocate(
+    4,
+    .after = 2
+  ) %>% 
+  mutate(
+    pval = if_else(p.value < 0.001, "< 0.001", as.character(p.value))
+  ) %>% 
+  select(-p.value) %>% 
+  relocate(
+    pval,
+    .before = "nobs"
+  ) 
+
+kbl(
+  tbl_df,
+  digits = 4,
+  col.names = c(
+    "Country",
+    "Intercept",
+    "$\\text{S.E.}_{inter.}$",
+    "Slope",
+    "$\\text{S.E.}_{slope}$",
+    "$R^2_{adj}$",
+    "p-value",
+    paste0("N° Obs.", footnote_marker_number(1, "latex"))
+  ),
+  format = "latex",
+  align = "lccccccr",
+  booktabs = TRUE,
+  escape = FALSE,
+  caption = "Regression results for the selected countries"
+) %>% 
+  kable_styling(
+    latex_options = c("striped", "hold_position")
+  ) %>% 
+  add_header_above(
+    c(
+      " " = 1,
+      "Parameters" = 4,
+      "Statistics" = 3
+    )
+  ) %>% 
+  column_spec(1, italic = TRUE) %>% 
+  footnote(
+    number = "Number of days with reports of confirmed cases in the date range",
+    threeparttable = TRUE
+  )
+```
+
+### Plots of the regression results per country
+
+```{r}
+#| fig.width: 7
+#| fig.height: 8
+#| eval: true
+mp_results <- readRDS("data/proc/monkeypox-selected-countries-model-results.rds") %>%
+  filter(term == "days") %>% 
+  select(
+    Country,
+    adj.r.squared,
+    nobs,
+    p.value
+  )
+mp_mod_data <- readRDS("data/proc/monkeypox-selected-countries-model-data.rds") %>%
+  left_join(
+    mp_results,
+    by = "Country"
+  )
+
+countries <- as.character(unique(mp_mod_data$Country))
+
+mk_reg_plot <- function(df) {
+  country <- unique(df$Country)
+  nobs <- unique(df$nobs)
+  plt <- ggplot(df, aes(x = days, y = log(acc_cases))) +
+    geom_point() +
+    geom_smooth(method = "lm", formula = y ~ x) +
+    stat_regline_equation(
+      #label.y.npc = 0.95,
+      formula = y ~ x,
+      size = 5,
+      aes(
+        label = paste(
+          ..eq.label.., 
+          ..adj.rr.label..,
+          sep = "~`,`~"
+        )
+      )
+    ) +
+    annotate(
+      geom = "text_npc",
+      npcx = 0.8,
+      npcy = 0.15,
+      label = glue::glue("N = {nobs}"),
+      hjust = 0,
+      size = 5
+    ) +
+    stat_cor(
+      aes(label = paste(..p.label..)),
+      p.accuracy = 0.001,
+      label.y.npc = 0.1,
+      label.x.npc = 0.8,
+      hjust = 0,
+      size = 5
+    ) +
+    labs(
+      x = "Number of days",
+      y = "log(Cumulative cases)",
+      title = country
+    ) +
+    theme_bw(base_size = 16) +
+    theme(
+      plot.title = element_text(size = 24, face = "bold")
+    )
+  return(plt)
+}
+
+for (cntry in countries) {
+  df <- mp_mod_data %>% 
+    filter(Country == cntry)
+  print(mk_reg_plot(df))
+}
+
+```
+
+
+## Estimation of the duplication time
+
+Given two cumulative counts: $C_1$, $C_2$, obtained at two different times: $t_1$, $t_2$, their ratio $Q$ is defined as follows:
+
+$$
+Q = \frac{C_2}{C_1} = \frac{\alpha e^{(\gamma \log{\beta}) t_2}}{\alpha e^{(\gamma \log{\beta}) t_1}} = \alpha e^{(\gamma \log{\beta}) (t_2 - t_1)}
+$$ {#eq-rdef}
+
+When $Q = 2$, then the difference ($t_2 - t_1$) is defined as the duplication time $T_d$: the time it takes for the count to double in size with respect to an initial value.
+
+Using that definition, and employing @eq-altlogeq:
+
+\begin{align}
+\log{Q} &= \log{\frac{C_2}{C_1}} \\
+  &= \log{C_2} - \log{C_1} \\
+  &= (A + B t_2) - (A - B t_1) \\
+  &= B(t_2 - t_1) \\
+  &= B(T_d) 
+\end{align}
+
+Finally we can define $T_d$ in terms of the slope ($B$), if $Q = 2$, then:
+
+$$
+T_d = \frac{\log{2}}{B}
+$$ {#eq-td}
+
+Using the regression results of the slope and its standard error, we can calculate $T_d$ and its C.I., obtaining:
+
+```{r}
+tbl_td <- tbl_df %>% 
+  select(
+    Country,
+    nobs,
+    B = estimate_B,
+    SEB = std.error_B
+  ) %>% 
+  mutate(
+    low_b = B - 1.96 * SEB,
+    hi_b = B + 1.96 * SEB,
+    CI_B = glue::glue(
+      "[{sprintf('%.4f', low_b)} - ",
+      "{sprintf('%.4f', hi_b)}]"
+    ),
+    td = log(2) / B,
+    low_td = log(2) / hi_b,
+    hi_td = log(2) / low_b,
+    CI_td = glue::glue(
+      "[{sprintf('%.4f', low_td)} - ",
+      "{sprintf('%.4f', hi_td)}]"
+    )
+  ) %>% 
+  select(
+    Country,
+    nobs,
+    B,
+    SEB,
+    CI_B,
+    td,
+    CI_td
+  ) %>% 
+  arrange(td)
+
+kbl(
+  tbl_td,
+  digits = 4,
+  col.names = c(
+    "Country",
+    paste0("N° Obs.", footnote_marker_number(1, "latex")),
+    "Slope",
+    "$\\text{S.E.}_{slope}$",
+    "$\\text{95\\% CI}_{slope}$",
+    "$\\widehat{T}_d$",
+    "$\\text{95\\% CI}_{\\widehat{T}_d}$"
+  ),
+  format = "latex",
+  booktabs = TRUE,
+  align = "lcccccc",
+  linesep = "",
+  caption = "Duplication time estimates for selected countries",
+  escape = FALSE
+) %>% 
+  kable_styling(
+    latex_options = c("striped", "HOLD_POSITION",
+                      "scale_down")
+  ) %>% 
+  column_spec(1, italic = TRUE) %>% 
+  column_spec(6, border_left = TRUE) %>% 
+  footnote(
+    number = "Number of days with reports of confirmed cases in the date range",
+    threeparttable = TRUE
+  )
+```
+
+\newpage
+
+## Estimation of the effective reproduction number
+
+According to [@bonifaziSimplifiedEstimateEffective2021] there is a functional relation between the effective reproduction number ($R_t$), and the duplication time, of the form:
+
+$$
+\widehat{R}_t = e^{(g \log{2}) / \widehat{T}_d}
+$$ {#eq-rt-td}
+
+where: $g$ is the generation time, and $\widehat{T}_d$ is the estimate of the duplication time.
+
+Combining @eq-td and @eq-rt-td, we can derive
+
+$$
+\widehat{R}_t = e^{(g \log{2}) / (\log{2} / B)} = e^{g B}
+$$ {#eq-rt-b}
+
+A recent article [@guzzettaEarlyEstimatesMonkeypox2022], gives an early estimate for the generation time of the current MPXV outbreak of 12.5 days (95% CI: [7.5 - 17.3]). Using @eq-rt-b, along with our estimate for the slope ($B$) and the published estimate for $g$ with its 95% CI, we can compute a possible value of $R_t$:
+
+
+```{r}
+tbl_rt <- tbl_df %>% 
+  select(
+    Country,
+    B = estimate_B
+  ) %>% 
+  mutate(
+    rt = exp(12.5 * B),
+    lo_rt = exp(7.5 * B),
+    hi_rt = exp(17.3 * B)
+  ) %>% 
+  arrange(desc(rt))
+
+kbl(
+  tbl_rt, 
+  booktabs = TRUE, 
+  digits = 3,
+  format = "latex",
+  col.names = c(
+    "Country",
+    "Slope",
+    paste0("$R_t$(mean)", footnote_marker_number(1, "latex")),
+    paste0("$R_t$(lower)", footnote_marker_number(2, "latex")),
+    paste0("$R_t$(upper)", footnote_marker_number(3, "latex"))
+  ),
+  escape = FALSE, 
+  linesep = "",
+  caption = "Estimates of $R_t$ for selected countries"
+) %>% 
+  kable_styling(
+    latex_options = c("striped", "HOLD_POSITION",
+                      "scale_down")
+  ) %>% 
+  column_spec(1, italic = TRUE) %>% 
+  footnote(
+    number = c(
+      "Using the mean estimate of 12.5 days",
+      "Using the lower estimate of 7.5 days",
+      "Using the higher estimate of 17.3 days"
+    )
+  )
+
+```
+
+
+\newpage
+
+```{r}
+
+# generate the incidence table
+mk_incidence_tbl <- function(df, row_indexes, last_epiweek, caption) {
+  df <- df %>% 
+    mutate(
+      ini_date = if_else(
+        ini_date >= as.Date("2022-05-01"),
+        as.character(ini_date),
+        paste0(ini_date, footnote_marker_number(2, "latex"))
+      )
+    )
+  
+  kbl(
+    df,
+    booktabs = TRUE,
+    longtable = TRUE,
+    digits = 3,
+    format.args = list(
+      big.mark = ",",
+      scientific = FALSE
+    ),
+    col.names = linebreak(
+      c(
+        "Country",
+        paste0("Date of first\nconfirmed case", 
+               footnote_marker_number(1, "latex"),
+               footnote_marker_number(3, "latex")
+               ),
+        paste0("Total\ncases", 
+               footnote_marker_number(1, "latex"),
+               footnote_marker_number(3, "latex")),
+        paste0("Population\n(2022)",
+               footnote_marker_number(4, "latex")),
+        paste0("Incidence\n(per million)", 
+               footnote_marker_number(3, "latex"))
+      )
+    ),
+    align = "lcrrr",
+    caption = caption, 
+    escape = FALSE
+  ) %>% 
+    pack_rows(
+      index = row_indexes,
+      latex_gap_space = "1em",
+      underline = TRUE
+    ) %>%
+    kable_styling(
+      latex_options = c("striped", "repeat_header", 
+                        "hold_position")
+    ) %>% 
+    row_spec(0, bold = TRUE) %>% 
+    footnote(
+      number = c(
+        "Source: Global.health Monkeypox data repository",
+        "Reports earlier than May 2022 are from endemic areas",
+        paste0("As of complete epidemiological week #", last_epiweek, " of 2022."),
+        "Source: UN 2022 Revision of World Population Prospects"
+      )
+    ) %>% 
+    column_spec(1, italic = TRUE)
+}
+
+# read the data
+mp_df <- readRDS("data/proc/monkeypox-confirmed-augmented.rds") %>%
+  filter(complete_epiweek)
+last_epiweek <- max(mp_df$epiweek, na.rm = TRUE)
+
+tbl_df <- mp_df %>%
+  group_by(
+    Country,
+    Continent,
+    Region,
+    PopTotal,
+    PopDensity
+  ) %>%
+  summarise(
+    ini_date = min(Date_confirmation, na.rm = TRUE),
+    n_cases = n()
+  ) %>%
+  mutate(
+    incidence = 1e6 * n_cases / PopTotal
+  ) %>%
+  arrange(Continent, Region, desc(incidence)) %>%
+  ungroup()
+
+incid_tbl_df <- tbl_df %>% 
+    ungroup() %>% 
+    select(
+      Continent,
+      Country,
+      ini_date,
+      n_cases,
+      PopTotal,
+      incidence
+    ) %>% 
+    arrange(
+      Continent,
+      desc(incidence)
+    ) %>%
+  ungroup()
+```
+
+
+## Cumulative incidence for all countries with confirmed cases
+
+In the following two tables, we show the cumulative incidence up to the most current complete epidemiological week (2022W`r last_epiweek`), separating those countries with 10 or more confirmed cases in total, from those with less than 10 cases.
+
+```{r}
+ten_or_more <- incid_tbl_df %>% 
+  filter(n_cases >= 10)
+
+row_indexes <- ten_or_more %>% 
+  group_by(Continent) %>% 
+  summarise(
+    max_row = max(row_number())
+  ) %>% 
+  deframe()
+
+mk_incidence_tbl(
+  ten_or_more %>% select(-Continent), 
+  row_indexes, 
+  last_epiweek,
+  "Cumulative incidence per million for countries at least 10 confirmed cases"
+)
+
+
+```
+
+
+```{r}
+less_than_then <- incid_tbl_df %>% 
+  filter(n_cases < 10)
+
+row_indexes <- less_than_then %>% 
+  group_by(Continent) %>% 
+  summarise(
+    max_row = max(row_number())
+  ) %>% 
+  deframe()
+
+mk_incidence_tbl(
+  less_than_then %>% select(-Continent), 
+  row_indexes, 
+  last_epiweek,
+  "Cumulative incidence per million for countries with less than 10 confirmed cases"
+)
+
+```
+
+## References
+
+::: {#refs}
+:::

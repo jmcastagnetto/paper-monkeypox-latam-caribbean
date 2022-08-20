@@ -1,7 +1,7 @@
 # timeline
-library(tidyverse)
-library(lubridate)
-library(ggh4x)
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(lubridate))
+suppressPackageStartupMessages(library(ggh4x))
 
 mp <- readRDS("data/proc/monkeypox-confirmed-augmented.rds")
 

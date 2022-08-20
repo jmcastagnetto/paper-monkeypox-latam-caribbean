@@ -1,5 +1,5 @@
-library(tidyverse)
-library(gt)
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(gt))
 
 # Prepare data for the table ----------------------------------------------
 
