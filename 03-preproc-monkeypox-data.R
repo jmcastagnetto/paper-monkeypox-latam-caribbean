@@ -84,3 +84,17 @@ write_csv(
   mp_confirmed_augmented,
   "data/proc/monkeypox-confirmed-augmented.csv"
 )
+
+# get the date ranges for the confirmations for each country
+
+country_confdates <- mp_confirmed_augmented %>%
+  group_by(Continent, Country, Country_ISO3) %>%
+  summarise(
+    start_date = min(Date_confirmation, na.rm = TRUE),
+    end_date = max(Date_confirmation, na.rm = TRUE)
+  )
+
+write_csv(
+  country_confdates,
+  "data/proc/country-confirmation-date-range.csv"
+)

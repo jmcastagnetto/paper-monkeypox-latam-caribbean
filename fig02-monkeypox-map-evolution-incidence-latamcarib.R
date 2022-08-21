@@ -56,7 +56,7 @@ plot_df <- mp_df %>%
   )
 
 # select data from every other epiweek
-every_other_epiweek <- unique(plot_df$epiweek)[c(FALSE, TRUE)]
+every_other_epiweek <- unique(plot_df$epiweek)[c(TRUE, FALSE)]
 
 lac_map_incid <- lac_map %>%
   left_join(
