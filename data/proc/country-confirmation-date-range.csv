@@ -13,8 +13,9 @@ Africa,Sudan,SDN,2022-07-31,2022-08-17
 Asia,Cyprus,CYP,2022-08-02,2022-08-18
 Asia,Georgia,GEO,2022-06-15,2022-08-17
 Asia,India,IND,2022-07-14,2022-08-12
+Asia,Indonesia,IDN,2022-08-19,2022-08-19
 Asia,Iran,IRN,2022-08-16,2022-08-16
-Asia,Israel,ISR,2022-05-21,2022-08-16
+Asia,Israel,ISR,2022-05-21,2022-08-21
 Asia,Japan,JPN,2022-07-25,2022-08-10
 Asia,Lebanon,LBN,2022-06-20,2022-08-08
 Asia,Philippines,PHL,2022-07-28,2022-08-19
@@ -33,7 +34,7 @@ Europe,Bosnia And Herzegovina,BIH,2022-07-13,2022-08-02
 Europe,Bulgaria,BGR,2022-06-23,2022-07-22
 Europe,Croatia,HRV,2022-06-23,2022-08-17
 Europe,Czech Republic,CZE,2022-05-24,2022-08-17
-Europe,Denmark,DNK,2022-05-23,2022-08-19
+Europe,Denmark,DNK,2022-05-23,2022-08-22
 Europe,England,GBR,2022-05-06,2022-08-15
 Europe,Estonia,EST,2022-06-28,2022-08-08
 Europe,Finland,FIN,2022-05-27,2022-08-04
@@ -71,10 +72,10 @@ Europe,Switzerland,CHE,2022-05-21,2022-08-16
 Europe,Wales,GBR,2022-05-26,2022-08-15
 Latin America and the Caribbean,Argentina,ARG,2022-05-27,2022-08-16
 Latin America and the Caribbean,Barbados,BRB,2022-07-16,2022-07-16
-Latin America and the Caribbean,Bolivia,BOL,2022-08-01,2022-08-18
-Latin America and the Caribbean,Brazil,BRA,2022-06-08,2022-08-19
-Latin America and the Caribbean,Chile,CHL,2022-06-17,2022-08-15
-Latin America and the Caribbean,Colombia,COL,2022-06-23,2022-08-15
+Latin America and the Caribbean,Bolivia,BOL,2022-08-01,2022-08-21
+Latin America and the Caribbean,Brazil,BRA,2022-06-08,2022-08-21
+Latin America and the Caribbean,Chile,CHL,2022-06-17,2022-08-18
+Latin America and the Caribbean,Colombia,COL,2022-06-23,2022-08-19
 Latin America and the Caribbean,Costa Rica,CRI,2022-07-20,2022-07-26
 Latin America and the Caribbean,Dominican Republic,DOM,2022-07-06,2022-08-17
 Latin America and the Caribbean,Ecuador,ECU,2022-07-06,2022-08-16
@@ -82,14 +83,14 @@ Latin America and the Caribbean,Guatemala,GTM,2022-08-03,2022-08-10
 Latin America and the Caribbean,Honduras,HND,2022-08-13,2022-08-15
 Latin America and the Caribbean,Jamaica,JAM,2022-07-06,2022-08-10
 Latin America and the Caribbean,Mexico,MEX,2022-05-28,2022-08-15
-Latin America and the Caribbean,Panama,PAN,2022-07-05,2022-08-17
-Latin America and the Caribbean,Peru,PER,2022-06-26,2022-08-18
+Latin America and the Caribbean,Panama,PAN,2022-07-05,2022-08-19
+Latin America and the Caribbean,Peru,PER,2022-06-26,2022-08-21
 Latin America and the Caribbean,Puerto Rico,PRI,2022-06-29,2022-08-17
 Latin America and the Caribbean,Saint Martin (French part),MAF,2022-08-01,2022-08-01
 Latin America and the Caribbean,Uruguay,URY,2022-07-29,2022-08-03
 Latin America and the Caribbean,Venezuela,VEN,2022-06-12,2022-06-12
 Northern America,Bermuda,BMU,2022-07-21,2022-07-21
-Northern America,Canada,CAN,2022-05-19,2022-08-18
+Northern America,Canada,CAN,2022-05-19,2022-08-19
 Northern America,Greenland,GRL,2022-08-09,2022-08-09
 Northern America,United States,USA,2022-05-18,2022-08-18
 Oceania,Australia,AUS,2022-05-20,2022-08-18
