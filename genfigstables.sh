@@ -14,10 +14,8 @@ echo ">>> Incidence by subregion"
 Rscript fig04-monkeypox-plot-incidence-by-subregion.R
 echo ">>> LATAM & Caribbean incidence table"
 Rscript tab01-monkeypox-tables-incidence.R
-echo ">>> Duplication time plot"
-Rscript fig05-monkeypox-duplication-time-plot.R
-echo ">>> Rt plot"
-Rscript fig06-monkeypox-rt-plot.R
+echo ">>> Duplication time and Rt plot"
+Rscript fig05ab-monkeypox-duplication-time-plot.R
 echo ">>> Supplementary materials PDF"
 quarto render paper-supplementary-materials.qmd --quiet --to pdf
 ls -lh  paper-supplementary-materials.pdf
