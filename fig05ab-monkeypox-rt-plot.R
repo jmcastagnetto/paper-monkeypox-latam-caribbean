@@ -131,5 +131,5 @@ ggsave(
   filename = "output/fig05ab-monkeypox-td-rt-selected-countries.tiff",
   dpi = 300,
   height = 10,
-  width = 12
+  width = 18
 )
