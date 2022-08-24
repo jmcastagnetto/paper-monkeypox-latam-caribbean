@@ -1,6 +1,12 @@
 suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(gt))
 
+
+# When the original data was last downloaded ------------------------------
+
+data_info <- file.info("data/orig/global_health_latest.csv")
+date_last_download <- as.Date(data_info$ctime)
+
 # Prepare data for the table ----------------------------------------------
 
 wb_countries <- readRDS("data/proc/wb-countries-income.rds") %>%
@@ -12,7 +18,7 @@ wb_countries <- readRDS("data/proc/wb-countries-income.rds") %>%
 
 mp_df <- readRDS("data/proc/monkeypox-confirmed-augmented.rds") %>%
   filter(complete_epiweek)
-last_modified <- max(mp_df$epiweek, na.rm = TRUE)
+most_recent_complete_epiweek <- max(mp_df$epiweek, na.rm = TRUE)
 
 build_table <- function(tbl_df) {
   tbl_df%>%
@@ -63,7 +69,7 @@ build_table <- function(tbl_df) {
       locations = cells_column_labels(
         columns = c(n_cases, incidence)
       ),
-      footnote = paste0("As of complete epidemiological week #", last_modified)
+      footnote = paste0("As of complete epidemiological week #", most_recent_complete_epiweek)
     ) %>%
     opt_row_striping()
 }
@@ -112,7 +118,7 @@ latam_incid_tbl <- build_table(
     footnote = "Venezuela has been temporarily unclassified as of July 2021 by the World Bank"
   ) %>%
   tab_source_note(
-    source_note = "Data sources: Global.health Monkeypox (accessed on 2022-08-03), UN 2022 Revision of World Population Prospects, World Bank Income Classification (FY 2023)"
+    source_note = glue::glue("Data sources: Global.health Monkeypox (accessed on {date_last_downloaded}), UN 2022 Revision of World Population Prospects, World Bank Income Classification (FY 2023)")
   ) %>%
   tab_header(
     title = "Monkeypox in Latinamerica and the Caribbean: Cummulative incidence per country"
