@@ -5,7 +5,7 @@ suppressPackageStartupMessages(library(gt))
 # When the original data was last downloaded ------------------------------
 
 data_info <- file.info("data/orig/global_health_latest.csv")
-date_last_download <- as.Date(data_info$ctime)
+date_last_downloaded <- as.Date(data_info$ctime)
 
 # Prepare data for the table ----------------------------------------------
 

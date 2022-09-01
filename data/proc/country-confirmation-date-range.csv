@@ -3,96 +3,102 @@ Africa,Benin,BEN,2022-06-14,2022-06-14
 Africa,Cameroon,CMR,2022-02-17,2022-07-17
 Africa,Central African Republic,CAF,2022-03-04,2022-05-19
 Africa,Democratic Republic Of The Congo,COD,2022-05-08,2022-07-28
-Africa,Ghana,GHA,2022-06-08,2022-08-10
+Africa,Ghana,GHA,2022-06-08,2022-08-26
 Africa,Liberia,LBR,2022-07-23,2022-08-08
-Africa,Morocco,MAR,2022-06-02,2022-06-02
+Africa,Morocco,MAR,2022-06-02,2022-08-25
 Africa,Nigeria,NGA,2022-01-31,2022-08-07
 Africa,Republic of Congo,COG,2022-04-12,2022-07-31
 Africa,South Africa,ZAF,2022-06-22,2022-08-17
 Africa,Sudan,SDN,2022-07-31,2022-08-17
-Asia,Cyprus,CYP,2022-08-02,2022-08-18
+Asia,Cyprus,CYP,2022-08-02,2022-08-29
 Asia,Georgia,GEO,2022-06-15,2022-08-17
 Asia,India,IND,2022-07-14,2022-08-12
 Asia,Indonesia,IDN,2022-08-19,2022-08-19
 Asia,Iran,IRN,2022-08-16,2022-08-16
-Asia,Israel,ISR,2022-05-21,2022-08-21
+Asia,Israel,ISR,2022-05-21,2022-08-29
 Asia,Japan,JPN,2022-07-25,2022-08-10
 Asia,Lebanon,LBN,2022-06-20,2022-08-08
 Asia,Philippines,PHL,2022-07-28,2022-08-19
 Asia,Qatar,QAT,2022-07-20,2022-08-09
-Asia,Saudi Arabia,SAU,2022-07-14,2022-08-17
-Asia,Singapore,SGP,2022-06-20,2022-08-05
+Asia,Saudi Arabia,SAU,2022-07-14,2022-08-30
+Asia,Singapore,SGP,2022-06-20,2022-08-20
 Asia,South Korea,KOR,2022-06-22,2022-06-22
 Asia,Taiwan,TWN,2022-06-24,2022-08-06
-Asia,Thailand,THA,2022-07-21,2022-08-14
-Asia,Turkey,TUR,2022-06-30,2022-08-02
+Asia,Thailand,THA,2022-07-21,2022-08-27
+Asia,Turkey,TUR,2022-06-30,2022-08-23
 Asia,United Arab Emirates,ARE,2022-05-24,2022-07-24
 Europe,Andorra,AND,2022-07-25,2022-08-08
-Europe,Austria,AUT,2022-05-23,2022-08-19
-Europe,Belgium,BEL,2022-05-19,2022-08-15
+Europe,Austria,AUT,2022-05-23,2022-08-29
+Europe,Belgium,BEL,2022-05-19,2022-08-29
 Europe,Bosnia And Herzegovina,BIH,2022-07-13,2022-08-02
 Europe,Bulgaria,BGR,2022-06-23,2022-07-22
-Europe,Croatia,HRV,2022-06-23,2022-08-17
-Europe,Czech Republic,CZE,2022-05-24,2022-08-17
-Europe,Denmark,DNK,2022-05-23,2022-08-22
-Europe,England,GBR,2022-05-06,2022-08-15
-Europe,Estonia,EST,2022-06-28,2022-08-08
+Europe,Croatia,HRV,2022-06-23,2022-08-26
+Europe,Czech Republic,CZE,2022-05-24,2022-08-30
+Europe,Denmark,DNK,2022-05-23,2022-08-30
+Europe,England,GBR,2022-05-06,2022-08-29
+Europe,Estonia,EST,2022-06-28,2022-08-23
 Europe,Finland,FIN,2022-05-27,2022-08-04
-Europe,France,FRA,2022-05-19,2022-08-18
-Europe,Germany,DEU,2022-05-19,2022-08-19
+Europe,France,FRA,2022-05-19,2022-08-29
+Europe,Germany,DEU,2022-05-19,2022-08-31
 Europe,Gibraltar,GIB,2022-06-01,2022-08-11
-Europe,Greece,GRC,2022-06-08,2022-08-18
+Europe,Greece,GRC,2022-06-08,2022-08-29
 Europe,Guadeloupe,FRA,2022-07-25,2022-07-25
-Europe,Hungary,HUN,2022-05-31,2022-08-14
+Europe,Hungary,HUN,2022-05-31,2022-08-30
 Europe,Iceland,ISL,2022-06-15,2022-08-17
-Europe,Ireland,IRL,2022-05-27,2022-08-17
-Europe,Italy,ITA,2022-05-19,2022-08-19
+Europe,Ireland,IRL,2022-05-27,2022-08-29
+Europe,Italy,ITA,2022-05-19,2022-08-30
 Europe,Latvia,LVA,2022-06-03,2022-08-15
 Europe,Lithuania,LTU,2022-08-03,2022-08-11
-Europe,Luxembourg,LUX,2022-06-16,2022-08-18
+Europe,Luxembourg,LUX,2022-06-16,2022-08-29
 Europe,Malta,MLT,2022-05-28,2022-08-17
-Europe,Martinique,FRA,2022-07-15,2022-08-11
+Europe,Martinique,FRA,2022-07-15,2022-08-29
 Europe,Moldova,MDA,2022-08-08,2022-08-16
 Europe,Monaco,MCO,2022-07-21,2022-08-11
-Europe,Montenegro,MNE,2022-08-01,2022-08-01
-Europe,Netherlands,NLD,2022-05-20,2022-08-18
+Europe,Montenegro,MNE,2022-08-01,2022-08-22
+Europe,Netherlands,NLD,2022-05-20,2022-08-30
 Europe,Northern Ireland,GBR,2022-05-26,2022-08-15
-Europe,Norway,NOR,2022-05-31,2022-08-19
-Europe,Poland,POL,2022-06-10,2022-08-17
-Europe,Portugal,PRT,2022-05-17,2022-08-10
-Europe,Romania,ROU,2022-06-13,2022-08-18
+Europe,Norway,NOR,2022-05-31,2022-08-30
+Europe,Poland,POL,2022-06-10,2022-08-30
+Europe,Portugal,PRT,2022-05-17,2022-08-24
+Europe,Romania,ROU,2022-06-13,2022-08-26
 Europe,Russia,RUS,2022-07-12,2022-07-12
-Europe,Scotland,GBR,2022-05-23,2022-08-15
+Europe,Scotland,GBR,2022-05-23,2022-08-29
 Europe,Serbia,SRB,2022-06-17,2022-08-17
-Europe,Slovakia,SVK,2022-07-07,2022-08-12
+Europe,Slovakia,SVK,2022-07-07,2022-08-22
 Europe,Slovenia,SVN,2022-05-24,2022-08-11
-Europe,Spain,ESP,2022-05-18,2022-08-16
-Europe,Sweden,SWE,2022-05-19,2022-08-18
-Europe,Switzerland,CHE,2022-05-21,2022-08-16
-Europe,Wales,GBR,2022-05-26,2022-08-15
-Latin America and the Caribbean,Argentina,ARG,2022-05-27,2022-08-16
+Europe,Spain,ESP,2022-05-18,2022-08-30
+Europe,Sweden,SWE,2022-05-19,2022-08-30
+Europe,Switzerland,CHE,2022-05-21,2022-08-30
+Europe,Wales,GBR,2022-05-26,2022-08-22
+Latin America and the Caribbean,Argentina,ARG,2022-05-27,2022-08-24
+Latin America and the Caribbean,Aruba,ABW,2022-08-22,2022-08-29
+Latin America and the Caribbean,Bahamas,BHS,2022-06-24,2022-08-19
 Latin America and the Caribbean,Barbados,BRB,2022-07-16,2022-07-16
-Latin America and the Caribbean,Bolivia,BOL,2022-08-01,2022-08-21
-Latin America and the Caribbean,Brazil,BRA,2022-06-08,2022-08-21
-Latin America and the Caribbean,Chile,CHL,2022-06-17,2022-08-18
-Latin America and the Caribbean,Colombia,COL,2022-06-23,2022-08-19
+Latin America and the Caribbean,Bolivia,BOL,2022-08-01,2022-08-30
+Latin America and the Caribbean,Brazil,BRA,2022-06-08,2022-08-30
+Latin America and the Caribbean,Chile,CHL,2022-06-17,2022-08-25
+Latin America and the Caribbean,Colombia,COL,2022-06-23,2022-08-29
 Latin America and the Caribbean,Costa Rica,CRI,2022-07-20,2022-07-26
-Latin America and the Caribbean,Dominican Republic,DOM,2022-07-06,2022-08-17
-Latin America and the Caribbean,Ecuador,ECU,2022-07-06,2022-08-16
-Latin America and the Caribbean,Guatemala,GTM,2022-08-03,2022-08-10
-Latin America and the Caribbean,Honduras,HND,2022-08-13,2022-08-15
-Latin America and the Caribbean,Jamaica,JAM,2022-07-06,2022-08-10
-Latin America and the Caribbean,Mexico,MEX,2022-05-28,2022-08-15
-Latin America and the Caribbean,Panama,PAN,2022-07-05,2022-08-19
-Latin America and the Caribbean,Peru,PER,2022-06-26,2022-08-21
-Latin America and the Caribbean,Puerto Rico,PRI,2022-06-29,2022-08-17
+Latin America and the Caribbean,Cuba,CUB,2022-08-20,2022-08-20
+Latin America and the Caribbean,Curaçao,CUW,2022-08-15,2022-08-15
+Latin America and the Caribbean,Dominican Republic,DOM,2022-07-06,2022-08-24
+Latin America and the Caribbean,Ecuador,ECU,2022-07-06,2022-08-27
+Latin America and the Caribbean,Guatemala,GTM,2022-08-03,2022-08-24
+Latin America and the Caribbean,Guyana,GUY,2022-08-22,2022-08-29
+Latin America and the Caribbean,Honduras,HND,2022-08-13,2022-08-29
+Latin America and the Caribbean,Jamaica,JAM,2022-07-06,2022-08-28
+Latin America and the Caribbean,Mexico,MEX,2022-05-28,2022-08-29
+Latin America and the Caribbean,Panama,PAN,2022-07-05,2022-08-30
+Latin America and the Caribbean,Paraguay,PRY,2022-08-25,2022-08-25
+Latin America and the Caribbean,Peru,PER,2022-06-26,2022-08-29
+Latin America and the Caribbean,Puerto Rico,PRI,2022-06-29,2022-08-30
 Latin America and the Caribbean,Saint Martin (French part),MAF,2022-08-01,2022-08-01
-Latin America and the Caribbean,Uruguay,URY,2022-07-29,2022-08-03
-Latin America and the Caribbean,Venezuela,VEN,2022-06-12,2022-06-12
+Latin America and the Caribbean,Uruguay,URY,2022-07-29,2022-08-27
+Latin America and the Caribbean,Venezuela,VEN,2022-06-12,2022-08-24
 Northern America,Bermuda,BMU,2022-07-21,2022-07-21
-Northern America,Canada,CAN,2022-05-19,2022-08-19
+Northern America,Canada,CAN,2022-05-19,2022-08-26
 Northern America,Greenland,GRL,2022-08-09,2022-08-09
-Northern America,United States,USA,2022-05-18,2022-08-18
-Oceania,Australia,AUS,2022-05-20,2022-08-18
+Northern America,United States,USA,2022-05-18,2022-08-30
+Oceania,Australia,AUS,2022-05-20,2022-08-30
 Oceania,New Caledonia,NCL,2022-07-12,2022-07-12
 Oceania,New Zealand,NZL,2022-07-09,2022-08-11
