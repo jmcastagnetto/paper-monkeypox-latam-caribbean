@@ -89,7 +89,7 @@ incid_plot <- ggplot(
 
 ggsave(
   plot = incid_plot,
-  filename = "output/fig04-monkeypox-incidence-by-subregion.tiff",
+  filename = "output/fig03-monkeypox-incidence-by-subregion.tiff",
   height = 16,
   width = 16,
   dpi = 300

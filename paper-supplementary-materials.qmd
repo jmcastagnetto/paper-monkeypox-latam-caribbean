@@ -21,6 +21,10 @@ suppressPackageStartupMessages(library(knitr))
 suppressPackageStartupMessages(library(kableExtra))
 suppressPackageStartupMessages(library(ggpubr))
 suppressPackageStartupMessages(library(ggpmisc))
+suppressPackageStartupMessages(library(gt))
+suppressPackageStartupMessages(library(sf))
+suppressPackageStartupMessages(library(rnaturalearth))
+suppressPackageStartupMessages(library(rnaturalearthdata))
 
 
 mp_models_data <- readRDS(
@@ -30,6 +34,10 @@ mp_models_data <- readRDS(
 mp_models_results <- readRDS(
   "data/proc/monkeypox-selected-countries-model-results.rds"
 )
+
+mp_df <- readRDS("data/proc/monkeypox-confirmed-augmented.rds") %>%
+  filter(complete_epiweek)
+last_epiweek <- max(mp_df$epiweek, na.rm = TRUE)
 
 mp_selected_countries <- mp_models_data %>% 
   group_by(Country) %>% 
@@ -52,8 +60,386 @@ mp_selected_countries <- mp_models_data %>%
 
 \renewcommand{\thesection}{\Alph{section}}
 
-## Regression models of exponential growth {#unnumbered}
 
+## Cummulative incidence of monkeypox in Latinamerica and the Caribbean
+
+```{r}
+# When the original data was last downloaded
+
+data_info <- file.info("data/orig/global_health_latest.csv")
+date_last_downloaded <- as.Date(data_info$ctime)
+
+# Prepare data for the table
+
+wb_countries <- readRDS("data/proc/wb-countries-income.rds") %>%
+  select(
+    Country_ISO3 = Code,
+    Income_group = `Income group`
+  ) %>%
+  distinct()
+
+mp_df <- readRDS("data/proc/monkeypox-confirmed-augmented.rds") %>%
+  filter(complete_epiweek)
+
+most_recent_complete_epiweek <- max(mp_df$epiweek, na.rm = TRUE)
+
+tbl_df <- mp_df %>%
+  left_join(
+    wb_countries,
+    by = "Country_ISO3"
+  ) %>%
+  group_by(
+    Country,
+    Income_group,
+    Continent,
+    Region,
+    PopTotal,
+    PopDensity
+  ) %>%
+  filter(Continent == "Latin America and the Caribbean") %>%
+  summarise(
+    ini_date = min(Date_confirmation, na.rm = TRUE),
+    n_cases = n()
+  ) %>%
+  mutate(
+    incidence = 1e6 * n_cases / PopTotal
+  ) %>%
+  arrange(Continent, Region, desc(incidence)) %>%
+  ungroup() %>% 
+  select(-PopTotal, -Continent, -PopDensity) %>%
+  relocate(
+    Income_group,
+    .after = last_col()
+  ) %>%
+  arrange(Region, desc(incidence)) %>%
+  relocate(
+    Region,
+    .before = 1
+  ) %>% 
+  mutate(
+    Income_group = replace_na(
+      Income_group,
+      paste0("**", footnote_marker_number(2))
+    )
+  )
+
+kbl(
+  tbl_df,
+  col.names = linebreak(
+    c("Region",
+      "Country",
+      "Date of First\nConfirmed Case",
+      paste0("Confirmed\nCases",
+             footnote_marker_number(1)),
+      paste0("Cummulative\nIncidence\n(per million)",
+             footnote_marker_number(1)),
+      "Income\ngroup")
+    ),
+  digits = 2,
+  booktabs = TRUE,
+  align = "lrcrrr",
+  escape = FALSE,
+  caption = "Monkeypox in Latinamerica and the Caribbean: Cummulative incidence per country"
+) %>% 
+  collapse_rows(
+    columns = 1,
+    latex_hline = "major",
+    valign = "top"
+  ) %>% 
+  kable_styling(
+    latex_options = c(
+      "scale_down", 
+      "hold_position"
+    )
+  ) %>% 
+  row_spec(
+    row = 0,
+    bold = TRUE
+  ) %>% 
+  column_spec(
+    column = 1,
+    bold = TRUE,
+    italic = TRUE
+  ) %>% 
+  footnote(
+    number = c(
+      paste0("As of complete epidemiological week #", most_recent_complete_epiweek),
+      "Venezuela has been temporarily unclassified as of July 2021 by the World Bank"
+    ),
+    general = glue::glue("Data sources: Global.health Monkeypox (accessed on {date_last_downloaded}), UN 2022 Revision of World Population Prospects, World Bank Income Classification (FY 2023)")
+  )
+  
+```
+
+\newpage
+
+
+## Cumulative incidence for all countries with confirmed cases
+
+In the following two tables, we show the cumulative incidence up to the most current complete epidemiological week (2022W`r last_epiweek`), separating those countries with 10 or more confirmed cases in total, from those with less than 10 cases.
+
+```{r}
+
+# generate the incidence table
+mk_incidence_tbl <- function(df, row_indexes, last_epiweek, caption) {
+  df <- df %>% 
+    mutate(
+      ini_date = if_else(
+        ini_date >= as.Date("2022-05-01"),
+        as.character(ini_date),
+        paste0(ini_date, footnote_marker_number(2, "latex"))
+      )
+    )
+  
+  kbl(
+    df,
+    booktabs = TRUE,
+    longtable = TRUE,
+    digits = 3,
+    format.args = list(
+      big.mark = ",",
+      scientific = FALSE
+    ),
+    col.names = linebreak(
+      c(
+        "Country",
+        paste0("Date of first\nconfirmed case", 
+               footnote_marker_number(1, "latex"),
+               footnote_marker_number(3, "latex")
+               ),
+        paste0("Total\ncases", 
+               footnote_marker_number(1, "latex"),
+               footnote_marker_number(3, "latex")),
+        paste0("Population\n(2022)",
+               footnote_marker_number(4, "latex")),
+        paste0("Incidence\n(per million)", 
+               footnote_marker_number(3, "latex"))
+      )
+    ),
+    align = "lcrrr",
+    caption = caption, 
+    escape = FALSE
+  ) %>% 
+    pack_rows(
+      index = row_indexes,
+      latex_gap_space = "1em",
+      underline = TRUE
+    ) %>%
+    kable_styling(
+      latex_options = c("striped", "repeat_header", 
+                        "hold_position")
+    ) %>% 
+    row_spec(0, bold = TRUE) %>% 
+    footnote(
+      number = c(
+        "Source: Global.health Monkeypox data repository",
+        "Reports earlier than May 2022 are from endemic areas",
+        paste0("As of complete epidemiological week #", last_epiweek, " of 2022."),
+        "Source: UN 2022 Revision of World Population Prospects"
+      )
+    ) %>% 
+    column_spec(1, italic = TRUE)
+}
+
+# # read the data
+# mp_df <- readRDS("data/proc/monkeypox-confirmed-augmented.rds") %>%
+#   filter(complete_epiweek)
+# last_epiweek <- max(mp_df$epiweek, na.rm = TRUE)
+
+tbl_df <- mp_df %>%
+  group_by(
+    Country,
+    Continent,
+    Region,
+    PopTotal,
+    PopDensity
+  ) %>%
+  summarise(
+    ini_date = min(Date_confirmation, na.rm = TRUE),
+    n_cases = n()
+  ) %>%
+  mutate(
+    incidence = 1e6 * n_cases / PopTotal
+  ) %>%
+  arrange(Continent, Region, desc(incidence)) %>%
+  ungroup()
+
+incid_tbl_df <- tbl_df %>% 
+    ungroup() %>% 
+    select(
+      Continent,
+      Country,
+      ini_date,
+      n_cases,
+      PopTotal,
+      incidence
+    ) %>% 
+    arrange(
+      Continent,
+      desc(incidence)
+    ) %>%
+  ungroup()
+```
+
+
+
+```{r}
+ten_or_more <- incid_tbl_df %>% 
+  filter(n_cases >= 10)
+
+row_indexes <- ten_or_more %>% 
+  group_by(Continent) %>% 
+  summarise(
+    max_row = max(row_number())
+  ) %>% 
+  deframe()
+
+mk_incidence_tbl(
+  ten_or_more %>% select(-Continent), 
+  row_indexes, 
+  last_epiweek,
+  "Cumulative incidence per million for countries at least 10 confirmed cases"
+)
+
+
+```
+
+```{r}
+less_than_then <- incid_tbl_df %>% 
+  filter(n_cases < 10)
+
+row_indexes <- less_than_then %>% 
+  group_by(Continent) %>% 
+  summarise(
+    max_row = max(row_number())
+  ) %>% 
+  deframe()
+
+mk_incidence_tbl(
+  less_than_then %>% select(-Continent), 
+  row_indexes, 
+  last_epiweek,
+  "Cumulative incidence per million for countries with less than 10 confirmed cases"
+)
+
+```
+
+\newpage
+
+
+
+
+## Evolution of monkeypox in Latinamerica and the Caribbean 
+
+```{r}
+#| fig-width: 8
+#| fig-height: 8
+lac_map <- ne_countries(scale = "medium", returnclass = "sf") %>%
+  filter(region_wb == "Latin America & Caribbean")
+
+lac_iso3 <- as.character(lac_map$iso_a3)
+
+mp_df <- readRDS("data/proc/monkeypox-confirmed-augmented.rds") %>%
+  filter(
+    epiweek >= 20 &                 # select from epiweek #20
+      complete_epiweek &            # only complete epiweeks
+      Country_ISO3 %in% lac_iso3    # latam & caribbean countries
+  ) %>%
+  arrange(
+    Country_ISO3,
+    PopTotal,
+    epiweek
+  ) %>%
+  group_by(
+    Country_ISO3,
+    PopTotal,
+    epiweek
+  ) %>%
+  tally(name = "n_cases") %>%
+  mutate(
+    n_accum = cumsum(n_cases),
+    incid = 1e6 * n_accum / PopTotal
+  ) %>%
+  ungroup() %>%
+  select(-PopTotal, -n_cases, -n_accum)
+
+# complete the other countries
+mp_df <- mp_df %>%
+  add_row(
+    Country_ISO3 = setdiff(lac_iso3, mp_df$Country_ISO3),
+    epiweek = NA_integer_,
+    incid = NA_real_
+  )
+
+min_epiweek <- min(mp_df$epiweek, na.rm = TRUE)
+max_epiweek <- max(mp_df$epiweek, na.rm = TRUE)
+
+plot_df <- mp_df %>%
+  group_by(Country_ISO3) %>%
+  complete( # fill epiweek series
+    epiweek = seq(min_epiweek, max_epiweek, by = 1)
+  ) %>%
+  fill(incid) %>%
+  ungroup() %>%
+  filter(!is.na(epiweek)) %>%
+  mutate(
+    lbl_epiweek = paste0("Week: ", epiweek)
+  )
+
+# select data from every other epiweek
+every_other_epiweek <- unique(plot_df$epiweek)[c(FALSE, TRUE)]
+
+lac_map_incid <- lac_map %>%
+  left_join(
+    plot_df %>% filter(epiweek %in% every_other_epiweek),
+    by = c("iso_a3" = "Country_ISO3")
+  ) %>%
+  filter(!is.na(epiweek))
+
+lac_plot <- ggplot(lac_map_incid) +
+  geom_sf(aes(fill = incid), size = 0.2) +
+  scale_fill_viridis_b(
+    direction = -1,
+    n.breaks = 10,
+    na.value = "white",
+    show.limits = TRUE
+  ) +
+  labs(
+    fill = "Incidence (per million) ",
+  ) +
+  theme_minimal() +
+  theme(
+    plot.background = element_rect(fill = "white", color = "white"),
+    plot.margin = unit(rep(0.5, 4), "cm"),
+    legend.position = "bottom",
+    legend.key.width = unit(3, "cm"),
+    legend.text = element_text(size = 12),
+    legend.title = element_text(size = 12, face = "bold"),
+    axis.text = element_blank(),
+    strip.background = element_rect(fill = "grey80", color = "grey80"),
+    strip.text = element_text(size = 14, face = "bold", color = "black")
+  ) +
+  facet_wrap(~lbl_epiweek, nrow = 2)
+lac_plot
+```
+
+\newpage
+
+## Details of the statistical analysis
+
+We performed a descriptive analysis summarizing the monkeypox cases' demographics and clinical history with absolute and relative frequencies if categorical and their median and interquartile range if continuous. Then, we performed a graphical analysis by plotting the timeline of the 2022 monkeypox outbreak based on the first cases and deaths reported by each WHO region along with the epidemic milestones. 
+
+In addition, we graphically compared the regional cumulative Incidence worldwide using the WHO regions and the weekly cumulative Incidence across LAC countries. 
+
+For the data processing, analysis, and creation of the tables and figures, we used the R 4.2.1 (R Foundation for Statistical Computing, Vienna, Austria) and R Studio 2022.07.1+554 (Free Software Foundation, Inc., Boston, MA), and the R packages: tidyverse (version 1.3.2), lubridate (version 1.8.0), rnaturalearth (version 0.1.0), sf (version 1.0.8), and gt (version 0.6.0.9000). 
+
+Finally, we estimated the effective reproductive number (Rt) and the duplication time ($T_d$) for each country with at least 200 monkeypox confirmed cases worldwide. For the Td estimates, we fit a regression of the logarithm of the cumulative confirmed cases vs. the count of days since the initial date for each country. 
+
+For the $R_t$ estimates, we use the approach described by @bonifaziSimplifiedEstimateEffective2021 and the generation time reported by @guzzettaEarlyEstimatesMonkeypox2022. The data selection, model equations, and calculation details are explained in this supplementary material
+
+
+
+## Regression models of exponential growth {#unnumbered}
 
 ### General equations
 
@@ -81,12 +467,12 @@ where: $A = \log{\alpha}$, $B = \gamma \log{\beta}$
 
 The MPX data obtained from the Global Health Data Science Initiative, was filtered using the following procedure:
 
-1. Only cases with a confirmed status were kept
-2. Data for which the confirmation date ranged from the epidemiological weeks 20 to 33 of 2022 were used. This allowed us to consider only cases in non-endemic countries
-3. Data was combined by confirmation date at the country level, and, after ordering each country timeseries, a cumulative number of cases was calculated
-4. Data from countries with 200 or more cumulative cases, up to the mos recent reported date, were considered for modeling
-5. From the selected countries, we used only dates for which the number of cumulative cases was equal or greater than 10.
-6. For each country timeseries, we created a days count series which reflected the difference between the earliest date in the series and the current one.
+1.  Only cases with a confirmed status were kept
+2.  Data for which the confirmation date ranged from the epidemiological weeks 20 to 33 of 2022 were used. This allowed us to consider only cases in non-endemic countries
+3.  Data was combined by confirmation date at the country level, and, after ordering each country timeseries, a cumulative number of cases was calculated
+4.  Data from countries with 200 or more cumulative cases, up to the mos recent reported date, were considered for modeling
+5.  From the selected countries, we used only dates for which the number of cumulative cases was equal or greater than 10.
+6.  For each country timeseries, we created a days count series which reflected the difference between the earliest date in the series and the current one.
 
 At the end of this selection procedure, we obtained the list in the following table:
 
@@ -121,7 +507,9 @@ kbl(
     threeparttable = TRUE
   )
 ```
- 
+
+\newpage
+
 ### Regression results
 
 Using @eq-altlogeq, we performed a regression of the logarithm (base 10) of the cumulative number of cases versus the days counts (*vide supra*)
@@ -207,6 +595,9 @@ kbl(
   )
 ```
 
+\newpage
+
+
 ### Plots of the regression results per country
 
 ```{r}
@@ -283,7 +674,6 @@ for (cntry in countries) {
 
 ```
 
-
 ## Estimation of the duplication time
 
 Given two cumulative counts: $C_1$, $C_2$, obtained at two different times: $t_1$, $t_2$, their ratio $Q$ is defined as follows:
@@ -296,6 +686,7 @@ When $Q = 2$, then the difference ($t_2 - t_1$) is defined as the duplication ti
 
 Using that definition, and employing @eq-altlogeq:
 
+```{=tex}
 \begin{align}
 \log{Q} &= \log{\frac{C_2}{C_1}} \\
   &= \log{C_2} - \log{C_1} \\
@@ -303,7 +694,7 @@ Using that definition, and employing @eq-altlogeq:
   &= B(t_2 - t_1) \\
   &= B(T_d) 
 \end{align}
-
+```
 Finally we can define $T_d$ in terms of the slope ($B$), if $Q = 2$, then:
 
 $$
@@ -395,8 +786,7 @@ $$
 \widehat{R}_t = e^{(g \log{2}) / (\log{2} / B)} = e^{g B}
 $$ {#eq-rt-b}
 
-A recent article [@guzzettaEarlyEstimatesMonkeypox2022], gives an early estimate for the generation time of the current MPXV outbreak of 12.5 days (95% CI: [7.5 - 17.3]). Using @eq-rt-b, along with our estimate for the slope ($B$) and the published estimate for $g$ with its 95% CI, we can compute a possible value of $R_t$:
-
+A recent article [@guzzettaEarlyEstimatesMonkeypox2022], gives an early estimate for the generation time of the current MPXV outbreak of 12.5 days (95% CI: \[7.5 - 17.3\]). Using @eq-rt-b, along with our estimate for the slope ($B$) and the published estimate for $g$ with its 95% CI, we can compute a possible value of $R_t$:
 
 ```{r}
 tbl_rt <- tbl_df %>% 
@@ -442,158 +832,8 @@ kbl(
 
 ```
 
-
 \newpage
 
-```{r}
-
-# generate the incidence table
-mk_incidence_tbl <- function(df, row_indexes, last_epiweek, caption) {
-  df <- df %>% 
-    mutate(
-      ini_date = if_else(
-        ini_date >= as.Date("2022-05-01"),
-        as.character(ini_date),
-        paste0(ini_date, footnote_marker_number(2, "latex"))
-      )
-    )
-  
-  kbl(
-    df,
-    booktabs = TRUE,
-    longtable = TRUE,
-    digits = 3,
-    format.args = list(
-      big.mark = ",",
-      scientific = FALSE
-    ),
-    col.names = linebreak(
-      c(
-        "Country",
-        paste0("Date of first\nconfirmed case", 
-               footnote_marker_number(1, "latex"),
-               footnote_marker_number(3, "latex")
-               ),
-        paste0("Total\ncases", 
-               footnote_marker_number(1, "latex"),
-               footnote_marker_number(3, "latex")),
-        paste0("Population\n(2022)",
-               footnote_marker_number(4, "latex")),
-        paste0("Incidence\n(per million)", 
-               footnote_marker_number(3, "latex"))
-      )
-    ),
-    align = "lcrrr",
-    caption = caption, 
-    escape = FALSE
-  ) %>% 
-    pack_rows(
-      index = row_indexes,
-      latex_gap_space = "1em",
-      underline = TRUE
-    ) %>%
-    kable_styling(
-      latex_options = c("striped", "repeat_header", 
-                        "hold_position")
-    ) %>% 
-    row_spec(0, bold = TRUE) %>% 
-    footnote(
-      number = c(
-        "Source: Global.health Monkeypox data repository",
-        "Reports earlier than May 2022 are from endemic areas",
-        paste0("As of complete epidemiological week #", last_epiweek, " of 2022."),
-        "Source: UN 2022 Revision of World Population Prospects"
-      )
-    ) %>% 
-    column_spec(1, italic = TRUE)
-}
-
-# read the data
-mp_df <- readRDS("data/proc/monkeypox-confirmed-augmented.rds") %>%
-  filter(complete_epiweek)
-last_epiweek <- max(mp_df$epiweek, na.rm = TRUE)
-
-tbl_df <- mp_df %>%
-  group_by(
-    Country,
-    Continent,
-    Region,
-    PopTotal,
-    PopDensity
-  ) %>%
-  summarise(
-    ini_date = min(Date_confirmation, na.rm = TRUE),
-    n_cases = n()
-  ) %>%
-  mutate(
-    incidence = 1e6 * n_cases / PopTotal
-  ) %>%
-  arrange(Continent, Region, desc(incidence)) %>%
-  ungroup()
-
-incid_tbl_df <- tbl_df %>% 
-    ungroup() %>% 
-    select(
-      Continent,
-      Country,
-      ini_date,
-      n_cases,
-      PopTotal,
-      incidence
-    ) %>% 
-    arrange(
-      Continent,
-      desc(incidence)
-    ) %>%
-  ungroup()
-```
-
-
-## Cumulative incidence for all countries with confirmed cases
-
-In the following two tables, we show the cumulative incidence up to the most current complete epidemiological week (2022W`r last_epiweek`), separating those countries with 10 or more confirmed cases in total, from those with less than 10 cases.
-
-```{r}
-ten_or_more <- incid_tbl_df %>% 
-  filter(n_cases >= 10)
-
-row_indexes <- ten_or_more %>% 
-  group_by(Continent) %>% 
-  summarise(
-    max_row = max(row_number())
-  ) %>% 
-  deframe()
-
-mk_incidence_tbl(
-  ten_or_more %>% select(-Continent), 
-  row_indexes, 
-  last_epiweek,
-  "Cumulative incidence per million for countries at least 10 confirmed cases"
-)
-
-
-```
-
-
-```{r}
-less_than_then <- incid_tbl_df %>% 
-  filter(n_cases < 10)
-
-row_indexes <- less_than_then %>% 
-  group_by(Continent) %>% 
-  summarise(
-    max_row = max(row_number())
-  ) %>% 
-  deframe()
-
-mk_incidence_tbl(
-  less_than_then %>% select(-Continent), 
-  row_indexes, 
-  last_epiweek,
-  "Cumulative incidence per million for countries with less than 10 confirmed cases"
-)
-
-```
 
 ## References
 

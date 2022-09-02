@@ -172,7 +172,7 @@ mp_plot <- ggplot(
 #mp_plot
 ggsave(
   plot = mp_plot,
-  filename = "output/fig03-mp-timeline.tiff",
+  filename = "output/fig02-mp-timeline.tiff",
   width = 16,
   height = 9,
   dpi = 300

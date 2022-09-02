@@ -128,7 +128,7 @@ fig5ab <- (mp_dup_time_plot + mp_rt_plot) +
 
 ggsave(
   plot = fig5ab,
-  filename = "output/fig05ab-monkeypox-td-rt-selected-countries.tiff",
+  filename = "output/fig04ab-monkeypox-td-rt-selected-countries.tiff",
   dpi = 300,
   height = 10,
   width = 18
