@@ -1,9 +1,11 @@
 # Code and data for the paper: 
-## "*Monkeypox in Latin America and the Caribbean: first response and challenge ahead after the first 100 days of the 2022 outbreak*"
+## "*Monkeypox in Latin America and the Caribbean: assessment of the first 100 days of the 2022 outbreak*"
 
 (Paper authors: Antonio Quispe & Jesus M. Castagnetto)
 
-[![DOI](https://zenodo.org/badge/525018011.svg)](https://zenodo.org/badge/latestdoi/525018011)
+Article: [https://doi.org/10.1080/20477724.2023.2201979](https://doi.org/10.1080/20477724.2023.2201979)
+
+[![Code](https://zenodo.org/badge/525018011.svg)](https://zenodo.org/badge/latestdoi/525018011)
 
 
 The scripts written in R are of two types: (a) those that pre-process the data and (b) those that generate the figures (maps, timeline and line plot) and incidence table.
